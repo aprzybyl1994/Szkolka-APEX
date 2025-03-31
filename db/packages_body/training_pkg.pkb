@@ -15,6 +15,8 @@ as
 
   end f_get_acc_weight;
 
+
+
   procedure p_set_acc_weight
   (pi_TRAINING_ID in TRAINING.TRAINING_ID%type)
     as
@@ -31,10 +33,11 @@ as
     as
         v_name TRAINING.NAME%type;
         v_date TRAINING.THE_DATE%type;
+        v_email USERS.EMAIL%type;
     begin
-        select NAME, THE_DATE into v_name, v_date from TRAINING where TRAINING_ID = pi_TRAINING_ID;
+        select T.NAME, T.THE_DATE, U.EMAIL into v_name, v_date, v_email from TRAINING T join USERS U on T.USER_ID = U.USER_ID where TRAINING_ID = pi_TRAINING_ID;
     apex_mail.send (
-        p_to                 => 'kmatecki@pretius.com',
+        p_to                 => v_email,
         p_template_static_id => 'TRAINING_REMINDER',
         p_placeholders       => '{' ||
         '    "TRAINING_NAME":' || apex_json.stringify(v_name) ||
